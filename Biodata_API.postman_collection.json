@@ -1,0 +1,240 @@
+{
+	"info": {
+		"_postman_id": "9f7b1e42-7a54-4a2b-b62a-8287c88b9012",
+		"name": "Biodata Saucedemo API",
+		"description": "Koleksi API Lengkap untuk Aplikasi Web Biodata (Express.js + MySQL + Docker)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "1. Auth - Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var res = pm.response.json();",
+							"if (res.token) {",
+							"    pm.collectionVariables.set(\"token\", res.token);",
+							"    console.log(\"Bearer Token otomatis disimpan ke variabel 'token'!\");",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"standard_user\",\n  \"password\": \"secret_sauce\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"login"
+					]
+				},
+				"description": "Hit API login untuk mendapatkan Bearer Token. Token akan otomatis tersimpan ke variabel Postman."
+			},
+			"response": []
+		},
+		{
+			"name": "2. Auth - Logout",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/logout",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"logout"
+					]
+				},
+				"description": "Hit API logout untuk mengakhiri sesi."
+			},
+			"response": []
+		},
+		{
+			"name": "3. Biodata - Ambil Semua (GET with Pagination)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/biodata?page=1&limit=10",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"biodata"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1",
+							"description": "Nomor halaman"
+						},
+						{
+							"key": "limit",
+							"value": "10",
+							"description": "Jumlah data per halaman (10, 25, 50)"
+						}
+					]
+				},
+				"description": "Mengambil daftar data biodata lengkap dengan informasi pagination."
+			},
+			"response": []
+		},
+		{
+			"name": "4. Biodata - Simpan Baru (POST)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"nama_lengkap\": \"Ashraf Rozaan\",\n  \"alamat\": \"Jalan Inspeksi Saluran Kalimalang No. 18, Kota Bekasi\",\n  \"tanggal_lahir\": \"1999-01-01\",\n  \"nomor_telepon\": \"+6285894724105\",\n  \"jenis_kelamin\": \"Laki-laki\",\n  \"jurusan\": \"Teknik Sipil\",\n  \"bahasa\": [\"Indonesia\", \"Jerman\"]\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/biodata",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"biodata"
+					]
+				},
+				"description": "Menyimpan data biodata baru ke tabel database MySQL. Jika ada data yang tidak diisi akan menghasilkan error 'data harus diisi'."
+			},
+			"response": []
+		},
+		{
+			"name": "5. Biodata - Ambil Detail ID (GET)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/biodata/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"biodata",
+						"1"
+					]
+				},
+				"description": "Mengambil satu record biodata berdasarkan ID."
+			},
+			"response": []
+		},
+		{
+			"name": "6. Biodata - Perbarui Data (PUT)",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"nama_lengkap\": \"Ashraf Rozaan Updated\",\n  \"alamat\": \"Jalan Sudirman Kav. 50, Jakarta Selatan\",\n  \"tanggal_lahir\": \"1999-01-01\",\n  \"nomor_telepon\": \"+6285894724105\",\n  \"jenis_kelamin\": \"Laki-laki\",\n  \"jurusan\": \"Teknik Sipil\",\n  \"bahasa\": [\"Indonesia\", \"Jerman\", \"Inggris\"]\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/biodata/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"biodata",
+						"1"
+					]
+				},
+				"description": "Memperbarui biodata berdasarkan ID."
+			},
+			"response": []
+		},
+		{
+			"name": "7. Biodata - Hapus Data (DELETE)",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/biodata/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"biodata",
+						"1"
+					]
+				},
+				"description": "Menghapus biodata dari database berdasarkan ID."
+			},
+			"response": []
+		}
+	]
+}

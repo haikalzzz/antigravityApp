@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SauceDemo - Login</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-header">
+      <div class="login-logo">Website Untuk <span>Testing</span></div>
+      <div class="login-tagline">Sistem Informasi Manajemen Biodata</div>
+    </div>
+
+    <div class="login-card">
+      <!-- SauceDemo Red Error Box -->
+      <div id="login-error" class="sauce-error-box" style="display: none;">
+        <span id="login-error-msg">Epic sadface: Username and password do not match any user in this service</span>
+        <button type="button" class="close-btn" onclick="dismissLoginError()">✕</button>
+      </div>
+
+      <form id="login-form" class="login-form">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" placeholder="Masukkan Username" autocomplete="username" required>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Masukkan Password" autocomplete="current-password" required>
+        </div>
+
+        <button type="submit" id="login-button" class="btn-sauce-login">Login</button>
+      </form>
+
+      <!-- Informasi Akun Bawaan (Seperti di Saucedemo) -->
+      <div class="credentials-box">
+        <h4>Informasi Akun Default:</h4>
+        <div class="user-item">
+          <span>Username: <b>standard_user</b></span>
+          <span>Password: <b>secret_sauce</b></span>
+        </div>
+        <div class="user-item">
+          <span>Username: <b>admin</b></span>
+          <span>Password: <b>admin123</b></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+</body>
+</html>

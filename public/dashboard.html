@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SauceDemo - Biodata Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Top Navbar -->
+  <header class="app-navbar">
+    <div class="navbar-brand">
+      SWAG <span>LABS</span> &bull; BIODATA
+    </div>
+    <div class="navbar-right">
+      <div class="user-badge">
+        Login sebagai: <strong id="logged-username">User</strong>
+      </div>
+      <div class="logout-wrapper">
+        <button type="button" id="logout-button" class="btn-logout" onclick="toggleLogoutModal(event)">Logout</button>
+        
+        <!-- Modal Pop-up Konfirmasi Logout (CSS Biasa, Kecil di Pojok Kanan Atas) -->
+        <div id="logout-modal" class="logout-popover" style="display: none;">
+          <div class="logout-popover-arrow"></div>
+          <div class="logout-popover-header">
+            <span class="logout-popover-title">Konfirmasi Keluar</span>
+          </div>
+          <p class="logout-popover-msg">Apakah Anda yakin ingin keluar dari aplikasi?</p>
+          <div class="logout-popover-actions">
+            <button type="button" class="btn-popover-cancel" onclick="closeLogoutModal()">Batal</button>
+            <button type="button" class="btn-popover-confirm" id="btn-confirm-logout" onclick="executeLogout()">Ya, Logout</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="dashboard-wrapper">
+    <div class="dashboard-title-bar">
+      <h2>Manajemen Data Mahasiswa & Biodata</h2>
+      <span id="total-badge" class="status-badge">Memuat data...</span>
+    </div>
+
+    <!-- Tampilan Dibagi 2 (Kiri Form, Kanan Tabel) -->
+    <div class="split-layout">
+      
+      <!-- KOLOM KIRI: FORM INPUT BIODATA -->
+      <section class="card form-card">
+        <div class="card-header">
+          <h3 id="form-title">Input Biodata Baru</h3>
+        </div>
+        <div class="card-body">
+          
+          <!-- Notifikasi Error & Sukses -->
+          <div id="form-error" class="alert-box alert-error">data harus diisi</div>
+          <div id="form-success" class="alert-box alert-success">Data berhasil disimpan!</div>
+
+          <form id="biodata-form" class="biodata-form">
+            <!-- Hidden ID untuk Edit Data -->
+            <input type="hidden" id="edit-id" value="">
+
+            <!-- 1. Nama Lengkap (varchar 50 karakter) -->
+            <div class="form-group">
+              <label for="nama_lengkap" class="form-label">
+                Nama Lengkap <span class="required">*</span>
+              </label>
+              <input 
+                type="text" 
+                id="nama_lengkap" 
+                name="nama_lengkap" 
+                maxlength="50" 
+                placeholder="Maksimal 50 karakter" 
+                required
+              >
+            </div>
+
+            <!-- 2. Alamat (text 100 karakter) -->
+            <div class="form-group">
+              <label for="alamat" class="form-label">
+                Alamat <span class="required">*</span>
+              </label>
+              <textarea 
+                id="alamat" 
+                name="alamat" 
+                maxlength="100" 
+                rows="3" 
+                placeholder="Maksimal 100 karakter" 
+                required
+              ></textarea>
+              <div class="char-counter"><span id="alamat-count">0</span> / 100 karakter</div>
+            </div>
+
+            <!-- 3. Tanggal Lahir (datepicker) -->
+            <div class="form-group">
+              <label for="tanggal_lahir" class="form-label">
+                Tanggal Lahir <span class="required">*</span>
+              </label>
+              <input 
+                type="date" 
+                id="tanggal_lahir" 
+                name="tanggal_lahir" 
+                required
+              >
+            </div>
+
+            <!-- 4. Nomor Telepon (+62, varchar 15 karakter) -->
+            <div class="form-group">
+              <label for="nomor_telepon" class="form-label">
+                Nomor Telepon <span class="required">*</span>
+              </label>
+              <div class="input-phone-group">
+                <span class="phone-prefix">+62</span>
+                <input 
+                  type="text" 
+                  id="nomor_telepon" 
+                  name="nomor_telepon" 
+                  maxlength="12" 
+                  placeholder="81234567890" 
+                  required
+                >
+              </div>
+              <div class="char-counter">Format otomatis awalan +62 (Maks 15 karakter)</div>
+            </div>
+
+            <!-- 5. Jenis Kelamin (radio button) -->
+            <div class="form-group">
+              <label class="form-label">
+                Jenis Kelamin <span class="required">*</span>
+              </label>
+              <div class="radio-options">
+                <label class="radio-item">
+                  <input type="radio" name="jenis_kelamin" value="Laki-laki" required>
+                  <span>Laki-laki</span>
+                </label>
+                <label class="radio-item">
+                  <input type="radio" name="jenis_kelamin" value="Perempuan" required>
+                  <span>Perempuan</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- 6. Jurusan (dropdown 10 jurusan universitas) -->
+            <div class="form-group">
+              <label for="jurusan" class="form-label">
+                Jurusan <span class="required">*</span>
+              </label>
+              <select id="jurusan" name="jurusan" required>
+                <option value="">-- Pilih Jurusan --</option>
+                <option value="Teknik Informatika">Teknik Informatika</option>
+                <option value="Sistem Informasi">Sistem Informasi</option>
+                <option value="Teknik Elektro">Teknik Elektro</option>
+                <option value="Teknik Mesin">Teknik Mesin</option>
+                <option value="Teknik Sipil">Teknik Sipil</option>
+                <option value="Manajemen">Manajemen</option>
+                <option value="Akuntansi">Akuntansi</option>
+                <option value="Ilmu Komunikasi">Ilmu Komunikasi</option>
+                <option value="Desain Komunikasi Visual">Desain Komunikasi Visual</option>
+                <option value="Kedokteran">Kedokteran</option>
+              </select>
+            </div>
+
+            <!-- 7. Bahasa yang Dikuasai (checkbox: indonesia, inggris, jepang, jerman) -->
+            <div class="form-group">
+              <label class="form-label">
+                Bahasa yang Dikuasai <span class="required">*</span>
+              </label>
+              <div class="checkbox-options">
+                <label class="checkbox-item">
+                  <input type="checkbox" name="bahasa" value="Indonesia">
+                  <span>Indonesia</span>
+                </label>
+                <label class="checkbox-item">
+                  <input type="checkbox" name="bahasa" value="Inggris">
+                  <span>Inggris</span>
+                </label>
+                <label class="checkbox-item">
+                  <input type="checkbox" name="bahasa" value="Jepang">
+                  <span>Jepang</span>
+                </label>
+                <label class="checkbox-item">
+                  <input type="checkbox" name="bahasa" value="Jerman">
+                  <span>Jerman</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Tombol Aksi Form -->
+            <div class="form-actions">
+              <button type="submit" id="btn-save" class="btn-primary">Simpan Data</button>
+              <button type="button" id="btn-cancel" class="btn-cancel" onclick="resetForm()">Batal Edit</button>
+            </div>
+          </form>
+
+        </div>
+      </section>
+
+      <!-- KOLOM KANAN: TABEL DATA BIODATA -->
+      <section class="card table-card">
+        <div class="card-header">
+          <h3>Tabel Data Biodata</h3>
+          <button type="button" class="btn-page" onclick="loadBiodataData()" title="Muat ulang data">🔄 Refresh</button>
+        </div>
+        
+        <div class="table-responsive">
+          <table class="sauce-table" id="biodata-table">
+            <thead>
+              <tr>
+                <th style="width: 40px;">No</th>
+                <th>Nama Lengkap</th>
+                <th>Alamat</th>
+                <th>Tgl Lahir</th>
+                <th>No. Telepon</th>
+                <th>Gender</th>
+                <th>Jurusan</th>
+                <th>Bahasa</th>
+                <th style="text-align: center; width: 120px;">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="biodata-table-body">
+              <tr>
+                <td colspan="9" class="empty-table-row">Memuat data dari database...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div class="pagination-container" id="pagination-bar">
+          <div class="page-size-selector">
+            <label for="select-limit">Tampilkan:</label>
+            <select id="select-limit" onchange="changeLimit(this.value)">
+              <option value="10">10 data</option>
+              <option value="25">25 data</option>
+              <option value="50">50 data</option>
+            </select>
+          </div>
+
+          <div class="pagination-controls">
+            <button type="button" id="btn-prev" class="btn-page" onclick="goToPrevPage()">
+              &laquo; Sebelumnya
+            </button>
+            <span id="page-indicator" class="page-info">Halaman 1 dari 1</span>
+            <button type="button" id="btn-next" class="btn-page" onclick="goToNextPage()">
+              Selanjutnya &raquo;
+            </button>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
